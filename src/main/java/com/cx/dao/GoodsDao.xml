@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 命名空间的值为dao层接口的权限定名 -->
+<mapper namespace="com.cx.dao.GoodsDao">
+	<select id="selall" resultMap="gmap">
+		SELECT * FROM goods JOIN kind JOIN brand 
+		ON goods.kid=kind.kid and goods.bid=brand.bid
+		<where>
+			<if test="null!=gname and ''!=gname">
+				and goods.gname LIKE CONCAT('%',#{gname},'%')
+			</if>
+			<if test="null!=gid and gid!=0">
+				and goods.gid=#{gid}
+			</if>
+		</where>
+	</select>
+	<resultMap type="Goods" id="gmap">
+			<id property="gid" column="gid"/>
+			<result property="gname" column="gname"/>
+			<result property="gename" column="gname"/>
+			<result property="gimg" column="gimg"/>
+			<result property="ginput" column="ginput"/>
+			<result property="gnum" column="gnum"/>
+			<result property="gprice" column="gprice"/>
+			<result property="gsize" column="gsize"/>
+			<result property="kid" column="kid"/>
+			<result property="bid" column="bid"/>
+	
+		<association property="brand" javaType="Brand">
+			<id property="bid" column="bid"/>
+			<result property="bname" column="bname"/>
+		</association>
+		<association property="kind" javaType="Kind">
+			<id property="kid" column="kid"/>
+			<result property="kname" column="kname"/>
+		</association>
+	</resultMap>
+	<delete id="del">
+		DELETE FROM goods WHERE goods.gid IN
+		<foreach collection="ids" item="ids" open="(" close=")" separator="," > 
+			#{ids}
+		</foreach>
+	</delete>
+</mapper>
